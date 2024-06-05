@@ -6,6 +6,7 @@ public class Product {
     private Integer Stock; /*ACA VA A HABER UN PROBLEMA CON EL STOCK Y LOS ALMACENES (CONSULTAR)*/
     private Double price;
     private EDepartment department;
+    private Integer daysToDeliver;
     private Boolean status;
 
 }
