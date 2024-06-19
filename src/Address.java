@@ -43,8 +43,22 @@ public class Address {
     public void setFloor(String floor) {
         this.floor = floor;
     }
-    /**
-     * Agregar Set de provincia y de Pais
-     * Puede ser un buena idea hacer almacen padre de Address
-     */
+
+    public void setCountry(ECountry country) {
+        this.country = country;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    @Override
+    public String toString() {
+        return "Address:" +
+                "\n\tcountry: " + country +
+                "\n\tstate: " + state +
+                "\n\tpostCode: " + postCode +
+                "\n\tstreet: " + street +
+                "\n\tfloor: " + floor;
+    }
 }
