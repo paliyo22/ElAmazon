@@ -1,28 +1,43 @@
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class User extends Account{
     private final Integer dni;
-    private Double maxExpense; /*la compra no puede ser mayor, se puede cambiar*/
-    private Double money; /*plata que todavia puede gastar se reinicia cada mes*/
-    private LinkedList<ShoppingRecord> shoppingList;
+    private ArrayList<ShoppingRecord> purchaseList;
 
     /* Creacion de Cuenta*/
-    public User(String name, Address address, String mail, String number,
-                Integer dni, Double maxExpense) {
-        super(name, address, mail, number);
+    public User(String name, String password, Address address, String mail, Long number,
+                Integer dni) {
+        super(name, password, address, mail, number);
         this.dni = dni;
-        this.maxExpense = maxExpense;
-        this.money = maxExpense;
-        this.shoppingList = new LinkedList<>();
+        this.purchaseList = new ArrayList<>();
     }
     /* Cargar Cuenta Desde Archivo*/
-    public User(String name, Address address, String mail, String number, Boolean status,
-                Long id, Integer dni, Double maxExpense, Double money,
-                LinkedList<ShoppingRecord> shoppingList) {
-        super(name, address, mail, number, status,id);
+    public User(String name, String password, Address address, String mail, Long number, Boolean status,
+                Long id, Integer dni, ArrayList<ShoppingRecord> shoppingList) {
+        super(name, password, address, mail, number, status,id);
         this.dni = dni;
-        this.maxExpense = maxExpense;
-        this.money = money;
-        this.shoppingList = shoppingList;
+        this.purchaseList = shoppingList;
+    }
+    public void addPurchase(ShoppingRecord shopping){
+        purchaseList.addFirst(shopping);
+    }
+    public String getPurchaseList(){
+        StringBuilder aux= new StringBuilder();
+        for (ShoppingRecord i: purchaseList){
+            aux.append(i.toString());
+        }
+        return aux.toString();
+    }
+    public String getShoppingRecord(int number){
+        number-=1;
+        return purchaseList.get(number).productList();
+    }
+
+    @Override
+    public String toString() {
+        return  "Dni: " + dni +
+                super.toString();
+
     }
 }

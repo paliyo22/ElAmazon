@@ -5,7 +5,7 @@ public class Product {
     private final Long id;
     private final Long businessId;
     private String name;
-    private Integer Stock;
+    private Integer stock;
     private Double price;
     private final EDepartment department;
     private Integer daysToDeliver;
@@ -16,7 +16,7 @@ public class Product {
         this.id=autoInc;
         this.businessId = businessId;
         this.name = name;
-        Stock = stock;
+        this.stock = stock;
         this.price = price;
         this.department = department;
         this.daysToDeliver = daysToDeliver;
@@ -29,7 +29,7 @@ public class Product {
         this.id = id;
         this.businessId = businessId;
         this.name = name;
-        Stock = stock;
+        this.stock = stock;
         this.price = price;
         this.department = department;
         this.daysToDeliver = daysToDeliver;
@@ -40,13 +40,19 @@ public class Product {
     }
 
     /** GETTERS */
+    public Double getPrice() {
+        return price;
+    }
+    public Integer getDaysToDeliver() {
+        return daysToDeliver;
+    }
 
     /** SETTERS */
     public void setName(String name) {
         this.name = name;
     }
     public void setStock(Integer stock) {
-        Stock = stock;
+        this.stock = stock;
     }
     public void setPrice(Double price) {
         this.price = price;
@@ -67,5 +73,10 @@ public class Product {
     @Override
     public int hashCode() {
         return Objects.hash(id, businessId);
+    }
+
+    @Override
+    public String toString() {
+        return  name + "\t$" + price + "\n";
     }
 }
