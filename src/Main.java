@@ -8,8 +8,9 @@ import java.util.Scanner;
 
 public class Main {
     private static final Scanner key = new Scanner(System.in);
-    private static int opcion;
+    private static int option;
     private static Amazon amazon;
+    private static boolean flag;
     public static void main(String[] args) {
         FileCast fileCast = new FileCast();
          amazon= fileCast.getFile("Amazon.dat");
@@ -38,12 +39,14 @@ public class Main {
             System.out.println("4. Salir");
             System.out.print("Seleccione una opción: ");
             try {
-                opcion = key.nextInt();
-            }catch(InputMismatchException ex){
-                opcion=0;
+                option = key.nextInt();
+            }catch(NoSuchElementException ex){
+                option=0;
                 key.next();
+            }catch (IllegalStateException e){
+                option=0;
             }
-            switch (opcion) {
+            switch (option) {
                 case 1:
                     showCategory();
                     break;
@@ -59,13 +62,38 @@ public class Main {
                 default:
                     System.out.println("Opción inválida, Intente de nuevo.");
             }
-        } while (opcion != 4);
+        } while (option != 4);
     }
 
     private static void logIn() {
+
     }
 
     private static void showCategory() {
+        EDepartment department;
+        do {
+            System.out.println("Seleccione una categoria");
+            System.out.println("0. Salir");
+            for (EDepartment e : EDepartment.values()) {
+                System.out.println((e.ordinal()+1)+". "+e.name());
+            }
+            try {
+                option= key.nextInt()-1;
+                for(EDepartment e : EDepartment.values()){
+                    if(option==e.ordinal()){
+                        department=e;
+                    }
+                }
+                showProducts(department);
+            }catch (InputMismatchException e){
+                System.out.println(e.getMessage());
+                key.next();
+            }catch (NullPointerException ex) {
+                System.out.println(ex.getMessage());
+            }
+
+
+        }while (option!=-1);
     }
 
     public static void createAccount(){
@@ -76,72 +104,107 @@ public class Main {
             System.out.println("0. Cancelar");
             System.out.print("Seleccione el tipo de cuenta que desea crear (1 o 2): ");
             try {
-                opcion = key.nextInt();
-            } catch (InputMismatchException ex) {
-                opcion = 0;
+                option = key.nextInt();
+            } catch (NoSuchElementException ex) {
+                option = 3;
                 key.next();
             }
-            switch (opcion) {
+            switch (option) {
                 case 0:
                     break;
                 case 1:
                     newClient();
+
                     break;
                 case 2:
-                    newBuisnes();
+                    newBusiness();
                     break;
                 default:
                     System.out.println("Opción inválida.");
             }
-        }while (opcion!=0);
+        }while (option<0 || option>2);
     }
 
-    private static void newClient() {
-        boolean flag=false;
-        String name;
-        String password;
-        Address address;
-        String mail;
-        long number;
-        int dni;
-        System.out.println("Ingrese su nombre");
-        name= key.nextLine();
+    private static Business newBusiness() {
+        Business business = new Business(newName(),newPassword(),newAddress(),newMail(),newNumber());
+        amazon.addAccount(business);
+        return business;
+    }
+
+    private static User newClient() {
+        User client =new User(newName(),newPassword(),newAddress(),newMail(),newNumber(),newDni());
+        amazon.addAccount(client);
+        return client;
+    }
+    private static String newName(){
+        String name = "";
+        flag =true;
+        do {
+            try {
+                System.out.println("Ingrese su nombre");
+                name = key.nextLine();
+                flag=false;
+            }catch (NoSuchElementException ex){
+                key.next();
+            }
+        }while(flag);
+        return name;
+    }
+    private static String newPassword(){
+        String password="";
+        flag =true;
         do {
             System.out.println("Ingrese una contraseña");
-            password = key.nextLine();
-            System.out.println("Verifique la contraseña");
-            if (key.nextLine().equals(password)){
-                flag=true;
-            }else {
-                System.out.println("Las contraseñas no coinciden intente devuelta");
-                clearScreen();
+            try {
+                password = key.nextLine();
+                System.out.println("Verifique la contraseña");
+                if (key.nextLine().equals(password)) {
+                    flag = true;
+                } else {
+                    System.out.println("Las contraseñas no coinciden intente devuelta");
+                    clearScreen();
+                }
+            }catch (NoSuchElementException ex){
+                key.next();
             }
         }while (!flag);
-        address = newAddress();
+        return password;
+    }
+    private static String newMail(){
+        String mail = "";
+        flag=true;
         do {
             System.out.println("Ingrese un mail:");
-            mail= key.nextLine();
-            if(!Account.emailValidation(mail)){
-                System.out.println("Formato incorrecto");
-            } else if (amazon.mailExist(mail)) {
-                System.out.println("Este mail ya esta registrado");
-            }else {
-                flag=false;
+            try {
+                mail = key.nextLine();
+
+                if (!Account.emailValidation(mail)) {
+                    System.out.println("Formato incorrecto");
+                } else if (amazon.mailExist(mail)) {
+                    System.out.println("Este mail ya esta registrado");
+                } else {
+                    flag = false;
+                }
+            }catch(NoSuchElementException ex){
+                key.next();
             }
         }while (flag);
+        return mail;
+    }
+    private static long newNumber(){
+       long number = 0;
+       flag=false;
         do{
             try {
                 System.out.println("Ingrese un numero de telefono :");
                 number= key.nextLong();
+                flag=true;
             } catch (NoSuchElementException ex){
-
+                key.next();
             }
 
         }while (!flag);
-
-
-        User client = new User();
-
+        return number;
     }
 
     private static Address newAddress() {
@@ -155,9 +218,9 @@ public class Main {
                 System.out.println((e.ordinal()+1)+". "+e.name());
             }
             try {
-                opcion= key.nextInt()-1;
+                option= key.nextInt()-1;
                 for(ECountry e : ECountry.values()){
-                    if(opcion==e.ordinal()){
+                    if(option==e.ordinal()){
                         country=e;
                     }
                 }
@@ -182,5 +245,20 @@ public class Main {
         System.out.println("Ingrese su direccion (ej: pepito 2456):");
         street=key.nextLine();
         return new Address(country,postalCode,street);
+    }
+    private static int newDni(){
+        int dni = 0;
+        flag=false;
+        do{
+            try {
+                System.out.println("Ingrese su Dni :");
+                dni= key.nextInt();
+                flag=true;
+            } catch (NoSuchElementException ex){
+                key.next();
+            }
+
+        }while (!flag);
+        return dni;
     }
 }
